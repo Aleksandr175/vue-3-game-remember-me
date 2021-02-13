@@ -1,7 +1,7 @@
 <template>
   <div class="board-wrapper">
     <div class="board">
-      <BoardItem v-for="field in fields" :field="field" :key="'item-' + field.id" />
+      <BoardItem :preview="preview" v-for="field in fields" :field="field" :key="'item-' + field.id" />
     </div>
     
     <p class="difficult">Сложность: <strong>{{ difficult }}</strong></p>
@@ -12,7 +12,8 @@
 
 <script>
 import BoardItem from './BoardItem';
-import { ref, onBeforeMount } from 'vue';
+import useGameInit from "@/components/composables/useGameInit";
+import useGameStart from "@/components/composables/useGameStart";
 
 export default {
   name: 'Board',
@@ -21,54 +22,21 @@ export default {
     BoardItem,
   },
   setup() {
-    let difficult = ref(3);
-    let fields = ref([]);
     const number = 25;
     
-    const init = () => {
-      fields.value = [];
-      
-      for (let i = 0; i < number; i++) {
-        fields.value.push({
-          id: i,
-          clicked: false,
-          value: 0,
-        });
-      }
-    }
+    const { difficult, fields, init } = useGameInit(number);
     
-    onBeforeMount(init);
+    const { start, preview } = useGameStart(init, fields, difficult, number);
     
     return {
       number,
       difficult,
       fields,
-      init
+      init,
+      start,
+      preview
     }
   },
-  
-  methods: {
-    start() {
-      this.init();
-      this.prepareGame();
-    },
-    
-    prepareGame() {
-      for (let i = 0; i < this.difficult; i++) {
-        const index = this.rand(0, this.number - 1);
-        
-        if (this.fields[index].value !== 1) {
-          this.fields[index].value = 1;
-        } else {
-          i--;
-        }
-      }
-    },
-  
-    rand(min, max) {
-      return Math.floor(Math.random() * (max - min)) + min;
-    },
-  }
 }
 </script>
 

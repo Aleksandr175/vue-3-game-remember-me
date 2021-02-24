@@ -6,6 +6,8 @@
     </div>
     
     <p class="difficult">Сложность: <strong>{{ difficult }}</strong></p>
+    <p class="win" v-if="isWin">Поздравляем! Продолжаем играть!</p>
+    <p class="fail" v-if="isFail">Вы проиграли. Попробуйте еще раз!</p>
   
     <button class="btn" @click="start" :disabled="!canStartGame">Старт</button>
   </div>
@@ -33,7 +35,7 @@ export default {
     
     const { start, canStartGame } = useGameStart(init, fields, difficult, number, gameStatus);
 
-    const { selectField } = useGameProcess(fields);
+    const { selectField, isWin, isFail } = useGameProcess(fields, gameStatus, difficult, start);
     
     return {
       number,
@@ -43,7 +45,9 @@ export default {
       start,
       gameStatus,
       canStartGame,
-      selectField
+      selectField,
+      isWin,
+      isFail
     }
   },
 }
@@ -77,5 +81,13 @@ export default {
   
   button:disabled {
     opacity: .5;
+  }
+  
+  .win {
+    color: #42b983;
+  }
+  
+  .fail {
+    color: #ff000055;
   }
 </style>
